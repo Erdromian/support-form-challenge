@@ -9,12 +9,5 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
-.idea/compiler.xml
-.idea/libraries/Leiningen__clojure_complete_0_2_4.xml
-.idea/libraries/Leiningen__org_clojure_tools_nrepl_0_2_12.xml
-.idea/misc.xml
-.idea/workspace.xml
-.idea/vcs.xml
 support-form-challenge.iml
-.idea/modules.xml
-.idea/libraries/Leiningen__org_clojure_clojure_1_8_0.xml
+.idea/*
