@@ -1,12 +1,24 @@
 (ns support-form-challenge.core
   (:require [ring.adapter.jetty :as j]
             [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.stacktrace :refer [wrap-stacktrace]]))
+            [ring.middleware.stacktrace :refer [wrap-stacktrace]]
+            [hiccup.core :as hiccup]))
 
-(defn handler [req]
+(def support-form
+  (hiccup/html
+    [:h1 "Hello World"]))
+
+(defmulti
+  ;"Naive router that dispatches based on request-method only.  Consider Compojure instead."
+  handler
+  :request-method)
+
+(defmethod handler :get [_]
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body "Hello World?"})
+   :body support-form})
+(defmethod handler :post [req]
+  {:status 200})
 
 (def app
   (-> #'handler
