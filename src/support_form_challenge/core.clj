@@ -31,6 +31,7 @@
    :body support-form})
 
 ; TODO: Do input validation.
+; TODO: Sending a post should just validate and stay on the form page.  Or have a placeholder "redirect-to" thing
 (defmethod handler :post [req]
   {:status 200})
 
