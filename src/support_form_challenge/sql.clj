@@ -4,8 +4,9 @@
 
 (def db {:classname "org.sqlite.JDBC"
          :subprotocol "sqlite"
-         :subname "test.db"})
+         :subname "support-form.db"})
 
+; TODO: Create table if not exists (so we don't keep dropping all data)
 (defn remake-table [target-db]
   (sql/execute! target-db ["drop table if exists requests"])
   (let [creation-script (sql/create-table-ddl
