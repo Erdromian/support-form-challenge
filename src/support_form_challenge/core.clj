@@ -17,6 +17,8 @@
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body support-form})
+
+; TODO: Do input validation.
 (defmethod handler :post [req]
   {:status 200})
 
