@@ -1,6 +1,7 @@
 (ns support-form-challenge.sql
   (:require [clojure.spec.alpha :as s]
-            [clojure.java.jdbc :as sql]))
+            [clojure.java.jdbc :as sql]
+            [support-form-challenge.shared-spec :as specs]))
 
 (def db {:classname "org.sqlite.JDBC"
          :subprotocol "sqlite"
@@ -19,18 +20,8 @@
     (sql/execute! db [creation-script])))
 (remake-table db)
 
-(def email-regex #"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$")
-(s/def ::email-type (s/and string? #(re-matches email-regex %)))
-
-(s/def ::message-body string?)
-(s/def ::category string?) ; TODO: enumerate the categorys instead
-(s/def ::email ::email-type)
-;(s/def ::file) ;TODO: file type...
-
-(s/def ::form-data (s/keys :req-un [::email ::category ::message-body]
-                           :opt-un [::file]))
 (defn store [{:keys [email category message-body file] :as form-data}]
-  {:pre [(s/valid? ::form-data form-data)]}
+  {:pre [(s/valid? specs/form-data form-data)]}
   (sql/insert! db :requests {:category category
                              :message message-body
                              :email email
