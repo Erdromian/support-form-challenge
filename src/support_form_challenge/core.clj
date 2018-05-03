@@ -2,11 +2,23 @@
   (:require [ring.adapter.jetty :as j]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
-            [hiccup.core :as hiccup]))
+            [hiccup.core :as hiccup]
+            [hiccup.form :as f]))
 
 (def support-form
   (hiccup/html
-    [:h1 "Hello World"]))
+    [:div
+     [:h1 "Hello World?"]
+     (f/form-to [:post "/"]
+       (f/label "Category" "Support Category")
+       (f/drop-down "Category" [1 2 3 4])
+       (f/label "Message" "How can we help?")
+       (f/text-area "Message")
+       (f/label "File" "Picture of the issue?")
+       (f/file-upload "File")
+       (f/label "Email" "Enter your Email")
+       (f/email-field "Email")
+       (f/submit-button "Submit"))]))
 
 (defmulti
   ;"Naive router that dispatches based on request-method only.  Consider Compojure instead."
