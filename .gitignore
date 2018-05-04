@@ -11,5 +11,5 @@ pom.xml.asc
 .hg/
 support-form-challenge.iml
 .idea/*
-keys.txt
+mail-settings.txt
 *.db
