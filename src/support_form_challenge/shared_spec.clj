@@ -5,7 +5,9 @@
 (s/def ::email-type (s/and string? #(re-matches email-regex %)))
 
 (s/def ::message string?)
-(s/def ::category string?) ; TODO: enumerate the categorys instead
+
+(def categories #{"Bug Report" "Product Support" "Feedback" "Other"})
+(s/def ::category categories) ; TODO: enumerate the categorys instead
 (s/def ::email ::email-type)
 ;(s/def ::file) ;TODO: file type...
 

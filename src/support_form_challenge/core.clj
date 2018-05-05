@@ -5,7 +5,8 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [hiccup.core :as hiccup]
-            [hiccup.form :as f]))
+            [hiccup.form :as f]
+            [support-form-challenge.shared-spec :refer [categories]]))
 
 ; An unfortunate hack to add :enctype to the hiccup form
 (defn with-enctype
@@ -21,7 +22,7 @@
      (with-enctype "multipart/form-data"
        (f/form-to [:post ""]
          (f/label "category" "Support Category")
-         (f/drop-down "category" [1 2 3 4]) ; TODO: Enumeration of categories
+         (f/drop-down "category" categories)
          (f/label "message" "How can we help?")
          (f/text-area "message")
          (f/label "file" "Picture of the issue?")

@@ -13,7 +13,7 @@
   (let [creation-script (sql/create-table-ddl
                           :requests
                           [[:id :integer :primary :key :autoincrement]
-                           [:category :text :not :null]
+                           [:category :text :not :null] ; TODO?: use an enumeration of numbers for this?
                            [:email :text :not :null]
                            [:message :text :not :null]
                            [:file :blob]])]
