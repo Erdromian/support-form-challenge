@@ -1,44 +1,79 @@
 (ns support-form-challenge.core
   (:require [ring.adapter.jetty :as j]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [hiccup.core :as hiccup]
             [hiccup.form :as f]))
 
+; An unfortunate hack to add :enctype to the hiccup form
+(defn with-enctype
+  "Adds encoding type of the form, to a vector since f/form-to doesn't support that option"
+  [enctype form-body]
+  (update form-body 1 #(assoc % :enctype enctype)))
+
+; TODO: support-form refilling to make more usable.  Maybe support error notifications too?
 (def support-form
   (hiccup/html
     [:div
      [:h1 "Hello World?"]
-     (f/form-to [:post "/"]
-       (f/label "Category" "Support Category")
-       (f/drop-down "Category" [1 2 3 4])
-       (f/label "Message" "How can we help?")
-       (f/text-area "Message")
-       (f/label "File" "Picture of the issue?")
-       (f/file-upload "File")
-       (f/label "Email" "Enter your Email")
-       (f/email-field "Email")
-       (f/submit-button "Submit"))]))
+     (with-enctype "multipart/form-data"
+       (f/form-to [:post ""]
+         (f/label "category" "Support Category")
+         (f/drop-down "category" [1 2 3 4]) ; TODO: Enumeration of categories
+         (f/label "message" "How can we help?")
+         (f/text-area "message")
+         (f/label "file" "Picture of the issue?")
+         (f/file-upload "file")
+         (f/label "email" "Enter your Email")
+         (f/email-field "email")
+         (f/submit-button "Submit")))]))
 
-(defmulti
-  ;"Naive router that dispatches based on request-method only.  Consider Compojure instead."
-  handler
-  :request-method)
-
-(defmethod handler :get [_]
+(def page-response
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body support-form})
 
-; TODO: Do input validation.
-; TODO: Sending a post should just validate and stay on the form page.  Or have a placeholder "redirect-to" thing
-(defmethod handler :post [req]
-  {:status 200})
+(defn format-form-data
+  "Reformats the map how I like.
+  In this case, by just keywording the given string keys"
+  [raw-params]
+  (reduce-kv
+    (fn [m k v] (assoc m (keyword k) v))
+    {}
+    raw-params))
+
+; TODO: can this just be a :pre or :post check on other functions?
+(defn validate-form-data
+  ""
+  [form-data])
+
+; TODO: Store/email
+
+(defn handle-upload [form-data]
+  (-> form-data
+      format-form-data))
+
+  ; Conform data to what I like
+  ; Validate what we wish
+  ; Store
+  ; Send email
+
+(defn one-page-handler [req]
+  (if (= :post (:request-method req))
+    (println req
+      "\n-P" (:params req)
+      "\n-K" (format-form-data (:params req))))
+
+  page-response)
 
 (def app
-  (-> #'handler
+  (-> #'one-page-handler
       (wrap-reload '(support-form-challenge.core))
-      (wrap-stacktrace)))
+      (wrap-stacktrace)
+      wrap-params
+      wrap-multipart-params))
 
 (defn boot []
   (j/run-jetty #'app {:port 8080}))

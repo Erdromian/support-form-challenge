@@ -20,12 +20,17 @@
     (sql/execute! db [creation-script])))
 (remake-table db)
 
-(defn store [{:keys [email category message-body file] :as form-data}]
+; TODO: Make a table for the files only.  Put a foreign key constraint from file id to here
+
+; TODO: Upsert-only?  Don't recreate duplicates, filter user spamming.
+(defn store [{:keys [email category message file] :as form-data}]
   {:pre [(s/valid? specs/form-data form-data)]}
   (sql/insert! db :requests {:category category
-                             :message message-body
+                             :message message
                              :email email
                              :file file}))
+
+; TODO: Use a transaction for file storage/body storage
 
 (defn get-all []
   (sql/query db ["select id, category, email, message, file from requests"]))
