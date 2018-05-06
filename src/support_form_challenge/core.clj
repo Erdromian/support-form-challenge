@@ -61,11 +61,12 @@
   ; Store
   ; Send email
 
+; TODO: validate that :size actually reflects upload size before storing
 (defn one-page-handler [req]
   (if (= :post (:request-method req))
     (println req
       "\n-P" (:params req)
-      "\n-K" (format-form-data (:params req))))
+      "\n-K" (instance? java.io.File (:tempfile (:file (format-form-data (:params req)))))))
 
   page-response)
 
