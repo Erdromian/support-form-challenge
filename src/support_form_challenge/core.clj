@@ -16,6 +16,7 @@
   [enctype form-body]
   (update form-body 1 #(assoc % :enctype enctype)))
 
+<<<<<<< HEAD
 ; TODO: support-form refilling to make more usable.  Maybe support form input error notifications too?
 (def support-form
   (hiccup/html
@@ -33,6 +34,8 @@
          (f/submit-button "Submit")))]))
 
 (def page-response
+=======
+>>>>>>> Dev
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body support-form})
@@ -52,6 +55,15 @@
       (dissoc keyworded :file)
       keyworded)))
 
+<<<<<<< HEAD
+=======
+; TODO: validation, that on failure triggers the form to show red for bad input
+; TODO?: validate that :size actually reflects upload size before storing
+(defn validate-form-data
+  ""
+  [form-data])
+
+>>>>>>> Dev
 (defn handle-upload [form-data]
   (let [pretty-data (format-form-data form-data)
         stored-id (store pretty-data)]

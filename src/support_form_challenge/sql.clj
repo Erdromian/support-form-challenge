@@ -8,6 +8,8 @@
          :subprotocol "sqlite"
          :subname "support-form.db"})
 
+<<<<<<< HEAD
+=======
 ; TODO: Create table if not exists (so we don't keep dropping all data)
 (defn remake-tables [target-db]
   (sql/execute! target-db ["drop table if exists requests"])
@@ -32,6 +34,7 @@
     (sql/db-do-commands db [files-table-script requests-table-script])))
 (remake-tables db) ; TODO: move this table definition somewhere sane.
 
+>>>>>>> Dev
 (defn file->bytes
   [file]
   (let [xout (java.io.ByteArrayOutputStream.)]
