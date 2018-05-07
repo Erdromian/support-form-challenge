@@ -5,15 +5,8 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [support-form-challenge.templates :refer [support-form]]
-            [support-form-challenge.shared-spec :refer [categories]]
             [support-form-challenge.sql :refer [store make-tables]]
             [support-form-challenge.email :refer [send-email]]))
-
-; An unfortunate hack to add :enctype to the hiccup form
-(defn with-enctype
-  "Adds encoding type of the form, to a vector since f/form-to doesn't support that option"
-  [enctype form-body]
-  (update form-body 1 #(assoc % :enctype enctype)))
 
 (defn page-response []
   {:status 200
