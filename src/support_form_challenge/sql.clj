@@ -8,33 +8,44 @@
          :subprotocol "sqlite"
          :subname "support-form.db"})
 
-<<<<<<< HEAD
-=======
-; TODO: Create table if not exists (so we don't keep dropping all data)
-(defn remake-tables [target-db]
-  (sql/execute! target-db ["drop table if exists requests"])
-  (sql/execute! target-db ["drop table if exists files"])
-  (let [requests-table-script
-        (sql/create-table-ddl
-            :requests
-            [[:id :integer :primary :key :autoincrement]
-             [:category :text :not :null] ; TODO?: use an enumeration of numbers for this?
-             [:email :text :not :null]
-             [:message :text :not :null]
-             [:file_id :integer "references files (id)"]]) ; NOTE: SQLite does not support actually using Foreign Keys.
-                                                ; If you switch to another SQL, check that the reference actually works
-        files-table-script
-        (sql/create-table-ddl
-          :files
-          [[:id :integer :primary :key :autoincrement]
-           [:filename :text :not :null]
-           [:content_type :text :not :null] ; TODO?: Enumeration?
-           [:size :integer :not :null]
-           [:file :blob :not :null]])]
-    (sql/db-do-commands db [files-table-script requests-table-script])))
-(remake-tables db) ; TODO: move this table definition somewhere sane.
+(def create-table-requests
+  (sql/create-table-ddl
+    :requests
+    [[:id :integer :primary :key :autoincrement]
+     [:category :text :not :null] ; TODO?: use an enumeration of numbers for this?
+     [:email :text :not :null]
+     [:message :text :not :null]
+     [:file_id :integer "references files (id)"]]))
 
->>>>>>> Dev
+(def create-table-files
+  (sql/create-table-ddl
+    :files
+    [[:id :integer :primary :key :autoincrement]
+     [:filename :text :not :null]
+     [:content_type :text :not :null] ; TODO?: Enumeration?
+     [:size :integer :not :null]
+     [:file :blob :not :null]]))
+
+(def table-scripts
+   [{:name "files" :script create-table-files}
+    {:name "requests" :script create-table-requests}])
+
+(defn try-make-table [{:keys [name script]}]
+  (try
+    (do (sql/db-do-commands db [script])
+        {:table name
+         :message "Created"})
+    (catch Exception e
+      {:table name
+       :message "Maybe Exists?"
+       :details (.getMessage e)})))
+
+(defn make-tables []
+  (map try-make-table table-scripts))
+
+(defn drop-table [db table-name]
+  (sql/execute! db [(str "drop table if exists " table-name)]))
+
 (defn file->bytes
   [file]
   (let [xout (java.io.ByteArrayOutputStream.)]
