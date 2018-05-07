@@ -26,7 +26,7 @@
           :files
           [[:id :integer :primary :key :autoincrement]
            [:filename :text :not :null]
-           [:content_type :text :not :null]
+           [:content_type :text :not :null] ; TODO?: Enumeration?
            [:size :integer :not :null]
            [:file :blob :not :null]])]
     (sql/db-do-commands db [files-table-script requests-table-script])))
@@ -68,7 +68,6 @@
                                    :message message
                                    :email email})
         (let [file-id (store-file file)]
-          (println (type file-id) file-id)
           (sql/insert! db :requests {:category category
                                      :message message
                                      :email email

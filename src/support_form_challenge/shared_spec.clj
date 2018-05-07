@@ -28,3 +28,8 @@
 (s/def ::form-data (s/keys :req-un [::email ::category ::message]
                            :opt-un [::file]))
 (def form-data ::form-data)
+
+(s/def ::id integer?)
+(s/def ::stored-id (s/keys :req-un [::id]))
+(s/def ::email-form (s/merge ::form-data ::stored-id))
+(def email-form ::email-form)

@@ -6,7 +6,9 @@
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [hiccup.core :as hiccup]
             [hiccup.form :as f]
-            [support-form-challenge.shared-spec :refer [categories]]))
+            [support-form-challenge.shared-spec :refer [categories]]
+            [support-form-challenge.sql :refer [store]]
+            [support-form-challenge.email :refer [send-email]]))
 
 ; An unfortunate hack to add :enctype to the hiccup form
 (defn with-enctype
@@ -14,7 +16,7 @@
   [enctype form-body]
   (update form-body 1 #(assoc % :enctype enctype)))
 
-; TODO: support-form refilling to make more usable.  Maybe support error notifications too?
+; TODO: support-form refilling to make more usable.  Maybe support form input error notifications too?
 (def support-form
   (hiccup/html
     [:div
@@ -38,36 +40,35 @@
 
 (defn format-form-data
   "Reformats the map how I like.
-  In this case, by just keywording the given string keys"
+  In this case, by keywording the given string keys, then nulling empty file uploads."
   [raw-params]
-  (reduce-kv
-    (fn [m k v] (assoc m (keyword k) v))
-    {}
-    raw-params))
+  (let [keyworded (reduce-kv
+                    (fn [m k v] (assoc m (keyword k) v))
+                    {}
+                    raw-params)]
+    (if (-> keyworded
+            :file
+            :size
+            (= 0))
+      (dissoc keyworded :file)
+      keyworded)))
 
-; TODO: can this just be a :pre or :post check on other functions?
+
+; TODO?: should this just be a :pre or :post check on other functions?
 (defn validate-form-data
   ""
   [form-data])
 
-; TODO: Store/email
-
 (defn handle-upload [form-data]
-  (-> form-data
-      format-form-data))
+  (let [pretty-data (format-form-data form-data)
+        stored-id (store pretty-data)]
+    (send-email (assoc pretty-data :id stored-id))))
 
-  ; Conform data to what I like
-  ; Validate what we wish
-  ; Store
-  ; Send email
-
-; TODO: validate that :size actually reflects upload size before storing
+; TODO?: validate that :size actually reflects upload size before storing
 (defn one-page-handler [req]
   (if (= :post (:request-method req))
-    (println req
-      "\n-P" (:params req)
-      "\n-K" (instance? java.io.File (:tempfile (:file (format-form-data (:params req)))))))
-
+    (let [form-data (:params req)]
+      (handle-upload form-data)))
   page-response)
 
 (def app
