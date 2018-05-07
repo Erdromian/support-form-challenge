@@ -36,13 +36,13 @@
                  :text (make-notification-body email category message id)}]
     (if (nil? file)
       content
-      (merge content {:attachment [(format-file file)]}))))
+      (assoc content :attachment [(format-file file)]))))
 
 (defn send-email [{:keys [email category message file id] :as email-data}]
   {:pre [(s/valid? specs/email-form email-data)]}
   (let [auth {:key mailgun-api-key :domain mailgun-domain}
         content (make-mail-content email-data)
-        temp-file (:attachment content)
-        mail-response (mail/send-mail auth content)]; TODO: Use response to determine failures, etc.
+        mail-response (mail/send-mail auth content); TODO: Use response to determine failures, etc.
+        temp-file (:attachment content)]
     (if (not (nil? temp-file))
       (run! #(.delete %) temp-file)))) ; TODO: Check this for safety!!!  Allowing POST data to cause a file delete is dangerous!

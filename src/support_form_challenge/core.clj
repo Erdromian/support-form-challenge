@@ -54,7 +54,7 @@
       keyworded)))
 
 
-; TODO?: should this just be a :pre or :post check on other functions?
+; TODO: validation, that on failure triggers the form to show red for bad input
 (defn validate-form-data
   ""
   [form-data])
@@ -84,5 +84,6 @@
 (defn -main
   "I just start up a server"
   [& args]
-  (println "Hello, World!")
+  (println args) ; TODO: Command-line arguments for initializing mailgun settings.
+  ; TODO: server conditional table build
   (boot))

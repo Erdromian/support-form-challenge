@@ -56,7 +56,7 @@
                               :content_type content-type
                               :size size
                               :file (file->bytes tempfile)})  ; TODO?: move data transform out of the insert?
-      unbox-last-rowid))
+      unbox-last-rowid)) ; TODO: check that rowID stays consistent if we delete entries
 
 ; TODO: Upsert-only?  Don't recreate duplicates, filter user spamming.
 (defn store [{:keys [email category message file] :as form-data}]

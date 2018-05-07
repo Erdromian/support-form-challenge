@@ -19,7 +19,6 @@
 
 (s/def ::size int?)
 
-; TODO: decide between file and tempfile
 (s/def ::file-map (s/keys :req-un {::filename ::content-type ::tempfile ::size}))
 (def file-map ::file-map)
 ;(s/def ::file-blob bytes?)
