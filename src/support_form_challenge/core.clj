@@ -4,8 +4,7 @@
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
-            [hiccup.core :as hiccup]
-            [hiccup.form :as f]
+            [support-form-challenge.templates :refer [support-form]]
             [support-form-challenge.shared-spec :refer [categories]]
             [support-form-challenge.sql :refer [store make-tables]]
             [support-form-challenge.email :refer [send-email]]))
@@ -15,31 +14,6 @@
   "Adds encoding type of the form, to a vector since f/form-to doesn't support that option"
   [enctype form-body]
   (update form-body 1 #(assoc % :enctype enctype)))
-
-; TODO: support-form refilling to make more usable.  Maybe support form input error notifications too?
-(defn support-form []
-  (hiccup/html
-    [:div
-     [:h1 "Support Page"]
-     (with-enctype "multipart/form-data"
-       (f/form-to [:post ""]
-         (f/label "category" "Support Category")
-         [:br]
-         (f/drop-down "category" categories)
-         [:br]
-         (f/label "message" "How can we help?")
-         [:br]
-         (f/text-area "message")
-         [:br]
-         (f/label "file" "Picture of the issue?")
-         [:br]
-         (f/file-upload "file")
-         [:br]
-         (f/label "email" "Enter your Email")
-         [:br]
-         (f/email-field "email")
-         [:br]
-         (f/submit-button "Submit")))]))
 
 (defn page-response []
   {:status 200
@@ -60,7 +34,6 @@
             (= 0))
       (dissoc keyworded :file)
       keyworded)))
-
 
 ; TODO: validation, that on failure triggers the form to show red for bad input
 ; TODO?: validate that :size actually reflects upload size before storing
