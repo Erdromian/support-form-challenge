@@ -21,18 +21,9 @@
                     (fn [m k v] (assoc m (keyword k) v))
                     {}
                     raw-params)]
-    (if (-> keyworded
-            :file
-            :size
-            (= 0))
+    (if (-> keyworded :file :size (= 0))
       (dissoc keyworded :file)
       keyworded)))
-
-; TODO: validation, that on failure triggers the form to show red for bad input
-; TODO?: validate that :size actually reflects upload size before storing
-(defn validate-form-data
-  ""
-  [form-data])
 
 (defn handle-upload [form-data]
   (let [pretty-data (format-form-data form-data)
