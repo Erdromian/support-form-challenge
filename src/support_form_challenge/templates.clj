@@ -1,6 +1,13 @@
 (ns support-form-challenge.templates
   (:require [hiccup.core :as hiccup]
-            [hiccup.form :as f]))
+            [hiccup.form :as f]
+            [support-form-challenge.shared-spec :refer [categories]]))
+
+; An unfortunate hack to add :enctype to the hiccup form
+(defn with-enctype
+  "Adds encoding type of the form, to a vector since f/form-to doesn't support that option"
+  [enctype form-body]
+  (update form-body 1 #(assoc % :enctype enctype)))
 
 (defn support-form []
   (hiccup/html
