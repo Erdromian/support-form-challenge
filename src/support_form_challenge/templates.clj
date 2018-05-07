@@ -10,6 +10,7 @@
   (update form-body 1 #(assoc % :enctype enctype)))
 
 (defn support-form []
+  {:post [(string? %)]}
   (hiccup/html
     [:div
      [:h1 "Support Page"]
