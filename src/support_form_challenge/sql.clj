@@ -32,15 +32,11 @@
     (sql/db-do-commands db [files-table-script requests-table-script])))
 (remake-tables db) ; TODO: move this table definition somewhere sane.
 
-; TODO: Make a table for the files only.  Put a foreign key constraint from file id to here
-
-; TODO: Blob/unblob formats
 (defn file->bytes
   [file]
   (let [xout (java.io.ByteArrayOutputStream.)]
     (io/copy file xout)
     (.toByteArray xout)))
-;(defn unbloben-file [blob])
 
 (defn unbox-last-rowid
   [SQL-response]
@@ -73,8 +69,6 @@
                                      :email email
                                      :file_id file-id})))
     unbox-last-rowid))
-
-; TODO: Use a transaction for file storage/body storage
 
 (def base-get-query "SELECT r.id, r.category, r.email, r.message, f.filename, f.content_type, f.size, f.file FROM requests AS r
     LEFT JOIN files AS f ON r.file_id = f.id")

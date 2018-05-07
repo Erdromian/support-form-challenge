@@ -20,7 +20,6 @@
 (def support-form
   (hiccup/html
     [:div
-     [:h1 "Hello World?"]
      (with-enctype "multipart/form-data"
        (f/form-to [:post ""]
          (f/label "category" "Support Category")
@@ -52,12 +51,6 @@
             (= 0))
       (dissoc keyworded :file)
       keyworded)))
-
-
-; TODO: validation, that on failure triggers the form to show red for bad input
-(defn validate-form-data
-  ""
-  [form-data])
 
 (defn handle-upload [form-data]
   (let [pretty-data (format-form-data form-data)
