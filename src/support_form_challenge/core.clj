@@ -21,10 +21,7 @@
                     (fn [m k v] (assoc m (keyword k) v))
                     {}
                     raw-params)]
-    (if (-> keyworded
-            :file
-            :size
-            (= 0))
+    (if (-> keyworded :file :size (= 0))
       (dissoc keyworded :file)
       keyworded)))
 

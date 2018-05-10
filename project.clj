@@ -12,4 +12,5 @@
                  [nilenso/mailgun "0.2.3"]] ; TODO: properly append the Eclipse Public License requirements
   :main ^:skip-aot support-form-challenge.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}
+             :dev {:dependencies [[org.clojure/test.check "0.9.0"]]}})
