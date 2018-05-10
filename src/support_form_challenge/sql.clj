@@ -41,7 +41,7 @@
        :details (.getMessage e)})))
 
 (defn make-tables []
-  (map try-make-table table-scripts))
+  (dorun (map try-make-table table-scripts)))
 
 (defn drop-table [db table-name]
   (sql/execute! db [(str "drop table if exists " table-name)]))
