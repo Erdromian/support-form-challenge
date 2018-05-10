@@ -67,8 +67,8 @@
       first))
 
 (defn store-file [{:keys [filename content-type size tempfile] :as file}]
-  {:pre [(s/valid? specs/file-map file)]}
-  {:post [(integer? %)]}
+  {:pre [(s/valid? specs/file-map file)]
+   :post [(integer? %)]}
   (-> (sql/insert! db :files {:filename filename
                               :content_type content-type
                               :size size
@@ -77,8 +77,8 @@
 
 ; TODO: Upsert-only?  Don't recreate duplicates, filter user spamming.
 (defn store [{:keys [email category message file] :as form-data}]
-  {:pre [(s/valid? specs/form-data form-data)]}
-  {:post [(integer? %)]}
+  {:pre [(s/valid? specs/form-data form-data)]
+   :post [(integer? %)]}
   ; TODO: do both inserts in a single transaction
   (-> (if (or (nil? file) (= 0 (:size file)))
         (sql/insert! db :requests {:category category
