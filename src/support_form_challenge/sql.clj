@@ -46,7 +46,6 @@
 (defn drop-table [db table-name]
   (sql/execute! db [(str "drop table if exists " table-name)]))
 
-; TODO: Create table if not exists (so we don't keep dropping all data)
 (defn remake-tables [db]
   (drop-table db "requests")
   (drop-table db "files")
